@@ -1060,18 +1060,364 @@ if uploaded_file is not None:
             == str(filter_value).lower().strip()
         ]
 
-    # --------------------------------------------------
-    # ASK YOUR DATA
-    # --------------------------------------------------
+# =========================
+# DATA COPILOT
+# =========================
 
-    st.subheader("💬 Ask Your Data")
+st.html("""
+<div style="
+    margin-top: 35px;
+    margin-bottom: 10px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+">
+    <div style="
+        width:42px;
+        height:42px;
+        border-radius:14px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:linear-gradient(135deg,#00d9ff,#7c3aed);
+        box-shadow:0 0 25px rgba(0,217,255,.35);
+        font-size:22px;
+    ">✦</div>
 
-    question = st.text_input(
-        "Ask a question about your dataset:",
-        placeholder="Example: What is the total sales?"
-    )
+    <div>
+        <div style="
+            font-size:12px;
+            letter-spacing:2px;
+            color:#67e8f9;
+            font-weight:700;
+        ">DATA COPILOT • ONLINE</div>
 
-    if question:
+        <div style="
+            font-size:28px;
+            font-weight:800;
+            color:#f8fafc;
+        ">Your intelligent data assistant</div>
+    </div>
+</div>
+""")
+
+COPILOT_HTML = """
+<div class="copilot">
+
+    <div class="copilot-top">
+        <div class="status">
+            <span class="dot"></span>
+            READY TO ANALYZE
+        </div>
+        <div class="ai-label">AI • DATA → INSIGHT</div>
+    </div>
+
+    <div class="input-row">
+
+        <input
+            id="question"
+            type="text"
+            placeholder="Ask your data anything..."
+            autocomplete="off"
+        />
+
+        <button id="mic" title="Speak your question">
+            🎤
+        </button>
+
+        <button id="send">
+            ➤
+        </button>
+
+    </div>
+
+    <div id="voice-status" class="voice-status">
+        🎙️ Click the microphone and speak your question
+    </div>
+
+    <div class="suggestions-title">
+        TRY ASKING
+    </div>
+
+    <div class="suggestions">
+
+        <button class="suggestion" data-question="What is the total sales?">
+            Total sales
+        </button>
+
+        <button class="suggestion" data-question="Which product has the highest sales?">
+            Top product
+        </button>
+
+        <button class="suggestion" data-question="What is the average sales?">
+            Average sales
+        </button>
+
+        <button class="suggestion" data-question="Show sales by region">
+            Sales by region
+        </button>
+
+    </div>
+
+</div>
+"""
+
+
+COPILOT_CSS = """
+.copilot {
+    padding: 24px;
+    border-radius: 24px;
+    border: 1px solid rgba(0,217,255,.30);
+    background:
+        radial-gradient(circle at 85% 15%, rgba(124,58,237,.20), transparent 35%),
+        radial-gradient(circle at 10% 90%, rgba(0,217,255,.12), transparent 35%),
+        rgba(8,11,20,.88);
+    box-shadow:
+        0 0 35px rgba(0,217,255,.08),
+        inset 0 0 30px rgba(124,58,237,.04);
+    font-family: inherit;
+}
+
+.copilot-top {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.status {
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    color:#67e8f9;
+}
+
+.dot {
+    display:inline-block;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#22c55e;
+    box-shadow:0 0 12px #22c55e;
+    margin-right:7px;
+}
+
+.ai-label {
+    font-size:10px;
+    color:#a78bfa;
+    letter-spacing:1px;
+}
+
+.input-row {
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+#question {
+    flex:1;
+    height:58px;
+    border-radius:16px;
+    border:1px solid rgba(103,232,249,.25);
+    background:rgba(17,24,39,.92);
+    color:#f8fafc;
+    padding:0 18px;
+    font-size:16px;
+    outline:none;
+    box-sizing:border-box;
+}
+
+#question:focus {
+    border-color:#22d3ee;
+    box-shadow:0 0 20px rgba(34,211,238,.15);
+}
+
+#question::placeholder {
+    color:#64748b;
+}
+
+#mic, #send {
+    width:58px;
+    height:58px;
+    border-radius:16px;
+    border:1px solid rgba(103,232,249,.25);
+    cursor:pointer;
+    font-size:20px;
+    transition:.2s;
+}
+
+#mic {
+    background:rgba(30,41,59,.95);
+    color:#67e8f9;
+}
+
+#send {
+    background:linear-gradient(135deg,#06b6d4,#7c3aed);
+    color:white;
+    border:none;
+    font-size:22px;
+    box-shadow:0 0 20px rgba(124,58,237,.25);
+}
+
+#mic:hover, #send:hover {
+    transform:translateY(-2px);
+    box-shadow:0 0 22px rgba(34,211,238,.30);
+}
+
+.voice-status {
+    margin-top:12px;
+    color:#64748b;
+    font-size:12px;
+}
+
+.suggestions-title {
+    margin-top:20px;
+    margin-bottom:10px;
+    font-size:10px;
+    letter-spacing:1.5px;
+    color:#64748b;
+    font-weight:700;
+}
+
+.suggestions {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.suggestion {
+    padding:9px 14px;
+    border-radius:20px;
+    border:1px solid rgba(124,58,237,.30);
+    background:rgba(124,58,237,.08);
+    color:#c4b5fd;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.suggestion:hover {
+    background:rgba(124,58,237,.20);
+    border-color:#8b5cf6;
+}
+"""
+
+
+COPILOT_JS = """
+export default function(component) {
+
+    const { parentElement, setTriggerValue } = component;
+
+    const input = parentElement.querySelector("#question");
+    const send = parentElement.querySelector("#send");
+    const mic = parentElement.querySelector("#mic");
+    const status = parentElement.querySelector("#voice-status");
+    const suggestions = parentElement.querySelectorAll(".suggestion");
+
+    function submitQuestion(value) {
+        value = value.trim();
+
+        if (value) {
+            setTriggerValue("submitted", value);
+        }
+    }
+
+    send.onclick = () => {
+        submitQuestion(input.value);
+    };
+
+    input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            submitQuestion(input.value);
+        }
+    });
+
+    suggestions.forEach((button) => {
+        button.onclick = () => {
+            const value = button.getAttribute("data-question");
+            input.value = value;
+            submitQuestion(value);
+        };
+    });
+
+    let recognition = null;
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+
+        recognition = new SpeechRecognition();
+
+        recognition.lang = "en-IN";
+        recognition.interimResults = false;
+        recognition.continuous = false;
+
+        recognition.onstart = () => {
+            status.textContent = "🔴 Listening... speak your question";
+            mic.style.boxShadow = "0 0 25px rgba(239,68,68,.7)";
+        };
+
+        recognition.onresult = (event) => {
+
+            const transcript =
+                event.results[0][0].transcript;
+
+            input.value = transcript;
+
+            status.textContent =
+                "✅ Question captured — analyzing...";
+
+            submitQuestion(transcript);
+        };
+
+        recognition.onerror = () => {
+            status.textContent =
+                "⚠️ Microphone unavailable. You can type your question.";
+            mic.style.boxShadow = "";
+        };
+
+        recognition.onend = () => {
+            mic.style.boxShadow = "";
+        };
+
+        mic.onclick = () => {
+            recognition.start();
+        };
+
+    } else {
+
+        mic.onclick = () => {
+            status.textContent =
+                "⚠️ Voice input is not supported in this browser.";
+        };
+    }
+
+    return () => {
+        if (recognition) {
+            recognition.onresult = null;
+            recognition.onerror = null;
+            recognition.onend = null;
+        }
+    };
+}
+"""
+
+
+data_copilot = st.components.v2.component(
+    "data_copilot",
+    html=COPILOT_HTML,
+    css=COPILOT_CSS,
+    js=COPILOT_JS,
+)
+
+copilot_result = data_copilot(
+    on_submitted_change=lambda: None
+)
+
+question = copilot_result.submitted or ""
+
+if question:
 
         question_lower = normalize(question)
 
